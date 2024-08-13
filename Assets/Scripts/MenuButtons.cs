@@ -9,4 +9,8 @@ public class MenuButtons : MonoBehaviour
     {
         SceneManager.LoadScene("LevelsScene");
     }
+    public void QuitGame()
+    {
+        Application.Quit();
+    }
 }
