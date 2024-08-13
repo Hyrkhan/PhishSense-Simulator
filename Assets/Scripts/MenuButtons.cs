@@ -7,6 +7,6 @@ public class MenuButtons : MonoBehaviour
 {
     public void StartGame()
     {
-        SceneManager.LoadScene("LevelScenes");
+        SceneManager.LoadScene("LevelsScenes");
     }
 }
