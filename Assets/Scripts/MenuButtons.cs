@@ -13,4 +13,20 @@ public class MenuButtons : MonoBehaviour
     {
         Application.Quit();
     }
+
+    private string previousScene;
+
+    public void LoadScene(string sceneName)
+    {
+        previousScene = SceneManager.GetActiveScene().name;
+        SceneManager.LoadScene(sceneName);
+    }
+
+    public void Back()
+    {
+        if (!string.IsNullOrEmpty(previousScene))
+        {
+            SceneManager.LoadScene(previousScene);
+        }
+    }
 }
