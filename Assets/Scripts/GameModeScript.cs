@@ -5,13 +5,9 @@ using UnityEngine.SceneManagement;
 
 public class MenuButtons : MonoBehaviour
 {
-    public void StartGame()
+    public void ProceedToGame()
     {
         SceneManager.LoadScene("LevelsScene");
-    }
-    public void QuitGame()
-    {
-        Application.Quit();
     }
     public void BacktoMainMenu()
     {
