@@ -17,4 +17,20 @@ public class MenuButtons : MonoBehaviour
     {
         SceneManager.LoadScene("MainMenu");
     }
+    public void TutorialModeScene()
+    {
+        SceneManager.LoadScene("TutorialMode");
+    }
+    public void EasyModeScene()
+    {
+        SceneManager.LoadScene("EasyMode");
+    }
+    public void NormalModeScene()
+    {
+        SceneManager.LoadScene("NormalMode");
+    }
+    public void HardModeScene()
+    {
+        SceneManager.LoadScene("HardMode");
+    }
 }

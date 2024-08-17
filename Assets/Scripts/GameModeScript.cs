@@ -9,8 +9,8 @@ public class MenuButtons : MonoBehaviour
     {
         SceneManager.LoadScene("LevelsScene");
     }
-    public void BacktoMainMenu()
+    public void BacktoLevelsScene()
     {
-        SceneManager.LoadScene("MainMenu");
+        SceneManager.LoadScene("LevelsScene");
     }
 }
