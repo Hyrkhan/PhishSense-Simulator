@@ -7,9 +7,11 @@ public class GameModeScript : MonoBehaviour
 {
     public GameObject gameWelcomeScreen;
     public GameObject gameScreen;
+
     public void ProceedToGame()
     {
-        SceneManager.LoadScene("LevelsScene");
+        gameWelcomeScreen.SetActive(false);
+        gameScreen.SetActive(true);
     }
     public void BacktoLevelsScene()
     {
