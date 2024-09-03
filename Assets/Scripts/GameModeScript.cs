@@ -13,6 +13,11 @@ public class GameModeScript : MonoBehaviour
     public Image fullscreenEmailImage; // Image container for fullscreen view
     public GameObject detectionScreen;
 
+    public GameObject detectionGameScreen;
+    public GameObject detectionScanScreen;
+    public GameObject detectionVMScreen;
+
+
 
     public void ProceedToGame()
     {
@@ -51,6 +56,21 @@ public class GameModeScript : MonoBehaviour
         detectionScreen.SetActive(false);
         gameScreen.SetActive(true);
     }
-
+    public void goScan()
+    {
+        detectionGameScreen.SetActive(false);
+        detectionScanScreen.SetActive(true);
+    }
+    public void goVM()
+    {
+        detectionGameScreen.SetActive(false);
+        detectionVMScreen.SetActive(true);
+    }
+    public void cancelDetect()
+    {
+        detectionScanScreen.SetActive(false);
+        detectionVMScreen.SetActive(false);
+        detectionGameScreen.SetActive(true);
+    }
 
 }
