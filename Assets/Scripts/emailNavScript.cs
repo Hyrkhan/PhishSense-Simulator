@@ -13,8 +13,8 @@ public class emailNavScript : MonoBehaviour
 
     public List<Email> emails;  // List of all emails
     public Image emailDisplay;  // UI element to display the email image
-
     private int currentIndex = 0;
+    public hintsScript hintSystem;
 
     private void Start()
     {
@@ -42,6 +42,7 @@ public class emailNavScript : MonoBehaviour
     private void DisplayEmail(int index)
     {
         emailDisplay.sprite = emails[index].emailImage;
+        hintSystem.displayHint(index);
     }
 
 
