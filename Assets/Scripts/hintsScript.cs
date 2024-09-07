@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,23 +16,30 @@ public class hintsScript : MonoBehaviour
     public List<Hints> hints;
     public GameObject hintDisplay;
     public int hintIndex = 0;
+    public bool isPressed;
 
     /* im having problem, this function wont work, it has to be displayed when the hints button is pressed and then it will
         call a function and display the hintsDisplay container with the corresponding hint based on the index
      */
-    public void displayHint(int index)
+
+    private void Start()
     {
-        foreach (var hint in hints)
-        {
-            hint.hintsContainer.SetActive(false);
-            hintDisplay.SetActive(false);
-        }
-
-        if (index > 0)
-        {
-            hints[index-1].hintsContainer.SetActive(true);
-            hintDisplay.SetActive(true);
-        }
-
+        isPressed = true;
     }
+    public void displayHint()
+    {
+        if (isPressed)
+        {
+            hints[hintIndex].hintsContainer.SetActive(true);
+            hintDisplay.SetActive(true);
+            isPressed = false;
+        }
+        else
+        {
+            hints[hintIndex].hintsContainer.SetActive(false);
+            hintDisplay.SetActive(false);
+            isPressed = true;
+        }
+    }
+
 }

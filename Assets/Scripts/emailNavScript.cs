@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -42,7 +43,7 @@ public class emailNavScript : MonoBehaviour
     private void DisplayEmail(int index)
     {
         emailDisplay.sprite = emails[index].emailImage;
-        hintSystem.displayHint(index);
+        hintSystem.hintIndex = index;
     }
 
 
