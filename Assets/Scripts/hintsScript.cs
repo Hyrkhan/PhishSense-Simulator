@@ -25,6 +25,12 @@ public class hintsScript : MonoBehaviour
     private void Start()
     {
         isPressed = true;
+        // Initialize hint system; all hints hidden by default
+        hintDisplay.SetActive(false);
+        foreach (var hint in hints)
+        {
+            hint.hintsContainer.SetActive(false);
+        }
     }
     public void displayHint()
     {
