@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static EmailFetcher;
 
 public class GameModeScript : MonoBehaviour
 {
@@ -14,14 +15,39 @@ public class GameModeScript : MonoBehaviour
     public GameObject detectionScanScreen;
     public GameObject detectionVMScreen;
 
+    public emailNavScript emailNavScript;  // Reference to the emailNavScript
 
+    public EmailFetcher emailFetcher;  // Reference to the EmailFetcher
+
+
+    private void Start()
+    {
+        // Subscribe to the OnEmailsFetched event
+        emailFetcher.OnEmailsFetched += OnEmailsFetched;
+    }
 
     public void ProceedToGame()
     {
-        gameWelcomeScreen.SetActive(false);
-        gameScreen.SetActive(true);
-    }
+        // Check if emails are loaded before proceeding
+        if (emailFetcher.GetEmails().Count > 0)
+        {
+            gameWelcomeScreen.SetActive(false);
+            gameScreen.SetActive(true);
 
+            // Pass the fetched emails to emailNavScript and display the first one
+            emailNavScript.SetEmails(emailFetcher.GetEmails());
+            emailNavScript.DisplayEmail(0);
+        }
+        else
+        {
+            Debug.LogError("Emails are not loaded yet. Please wait.");
+        }
+    }
+    // When emails are fetched
+    private void OnEmailsFetched()
+    {
+        Debug.Log("Emails fetched, ready to display.");
+    }
     public void BacktoLevelsScene()
     {
         SceneManager.LoadScene("LevelsScene");

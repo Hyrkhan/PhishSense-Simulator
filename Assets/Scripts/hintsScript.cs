@@ -1,51 +1,42 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-
 public class hintsScript : MonoBehaviour
 {
-    [System.Serializable]
-    public class Hints
-    {
-        public GameObject hintsContainer;
-    }
-
-    public List<Hints> hints;
-    public GameObject hintDisplay;
-    public int hintIndex = 0;
-    public bool isPressed;
-
-    /* im having problem, this function wont work, it has to be displayed when the hints button is pressed and then it will
-        call a function and display the hintsDisplay container with the corresponding hint based on the index
-     */
+    public GameObject hintDisplay;  // Container for displaying hints
+    public TMP_Text hintText;       // UI Text component to display the hint
+    public bool isPressed = false;  // Flag to track if the hint is displayed
+    private string theHint = "";    // Current hint text
 
     private void Start()
     {
-        isPressed = true;
-        // Initialize hint system; all hints hidden by default
-        hintDisplay.SetActive(false);
-        foreach (var hint in hints)
-        {
-            hint.hintsContainer.SetActive(false);
-        }
+        hintDisplay.SetActive(false);  // Make sure the hint display is initially hidden
     }
+
+    // Call this method to update the hint content
+    public void SetHint(string hint)
+    {
+        Debug.Log("Hint Set: " + hint);  // Log for debugging
+        theHint = hint;                  // Set the hint text
+    }
+
+    // This method toggles the hint display on or off
     public void displayHint()
     {
         if (isPressed)
         {
-            hints[hintIndex].hintsContainer.SetActive(true);
-            hintDisplay.SetActive(true);
-            isPressed = false;
+            hintDisplay.SetActive(false);  // Hide the hint display
         }
         else
         {
-            hints[hintIndex].hintsContainer.SetActive(false);
-            hintDisplay.SetActive(false);
-            isPressed = true;
+            hintDisplay.SetActive(true);   // Show the hint display
+            hintText.text = theHint;       // Update the displayed hint text
         }
-    }
 
+        isPressed = !isPressed;  // Toggle the pressed state
+    }
 }
