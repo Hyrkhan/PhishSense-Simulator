@@ -12,6 +12,9 @@ public class detectionScript : MonoBehaviour
     public TMP_InputField VMsearchBox;
     private string copyLink = "";
 
+    public GameObject baseScreen;
+    public GameObject resultScreen;
+
     void Update()
     {
         clipboard.text = copyLink;
@@ -29,5 +32,15 @@ public class detectionScript : MonoBehaviour
     public void PasteLink2()
     {
         VMsearchBox.text = copyLink;
+    }
+    public void Scan()
+    {
+        baseScreen.SetActive( false );
+        resultScreen.SetActive( true );
+    }
+    public void ScanAnother()
+    {
+        resultScreen.SetActive( false );
+        baseScreen.SetActive( true );
     }
 }

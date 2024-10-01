@@ -12,6 +12,16 @@ public class EmailFetcher : MonoBehaviour
         public string emailTextBody;  // The text of the email
         public string emailLink;      // The link inside the email
         public string hint;
+
+        // URL Scanner fields
+        public string securityVerdict;
+        public string securityHeaders;
+        public string securityViolations;
+
+        // SSL Certificates Info
+        public string certSubject;
+        public string certIssueDate;
+        public string certExpiryDate;
     }
 
     public List<Email> emails = new List<Email>();  // List to store fetched emails
@@ -47,6 +57,25 @@ public class EmailFetcher : MonoBehaviour
                         emailLink = emailData["emailLink"].ToString(),
                         hint = emailData["hint"].ToString()
                     };
+
+                    // Handle urlScanner fields, which are nested
+                    if (emailData.ContainsKey("urlScanner"))
+                    {
+                        Dictionary<string, object> urlScanner = emailData["urlScanner"] as Dictionary<string, object>;
+
+                        email.securityVerdict = urlScanner["securityVerdict"].ToString();
+                        email.securityHeaders = urlScanner["securityHeaders"].ToString();
+                        email.securityViolations = urlScanner["securityViolations"].ToString();
+
+                        if (urlScanner.ContainsKey("certificates"))
+                        {
+                            Dictionary<string, object> certificates = urlScanner["certificates"] as Dictionary<string, object>;
+
+                            email.certSubject = certificates["subject"].ToString();
+                            email.certIssueDate = certificates["issueDate"].ToString();
+                            email.certExpiryDate = certificates["expiryDate"].ToString();
+                        }
+                    }
 
                     emails.Add(email);  // Add each email to the list
                 }

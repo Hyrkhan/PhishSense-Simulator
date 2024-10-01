@@ -14,6 +14,7 @@ public class emailNavScript : MonoBehaviour
     private int currentIndex = 0;  // Track which email is currently displayed
 
     public hintsScript hintSystem;
+    public scanResultScript scanResultScript;
 
     // Set the emails from the fetched data
     public void SetEmails(List<EmailFetcher.Email> fetchedEmails)
@@ -40,6 +41,16 @@ public class emailNavScript : MonoBehaviour
 
         // Update hint system with the new hint
         hintSystem.SetHint(email.hint);  // Set the hint for the current email
+
+        Debug.Log($"Debug: {email.securityVerdict}");
+        scanResultScript.SetURLParameters(
+            email.securityVerdict,
+            email.securityHeaders,
+            email.securityViolations,
+            email.certSubject,
+            email.certIssueDate,
+            email.certExpiryDate
+            );
 
         Debug.Log("UI updated: Sender, Body, Link, Hint");
     }
