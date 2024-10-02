@@ -14,14 +14,18 @@ public class EmailFetcher : MonoBehaviour
         public string hint;
 
         // URL Scanner fields
-        public string securityVerdict;
-        public string securityHeaders;
-        public string securityViolations;
+        public string domainAge;
+        public int redirectsFound;
 
         // SSL Certificates Info
         public string certSubject;
         public string certIssueDate;
         public string certExpiryDate;
+
+        // Security Headers
+        public string contentSecurityPolicy;
+        public string strictTransportSecurity;
+        public string xFrameOptions;
     }
 
     public List<Email> emails = new List<Email>();  // List to store fetched emails
@@ -63,9 +67,8 @@ public class EmailFetcher : MonoBehaviour
                     {
                         Dictionary<string, object> urlScanner = emailData["urlScanner"] as Dictionary<string, object>;
 
-                        email.securityVerdict = urlScanner["securityVerdict"].ToString();
-                        email.securityHeaders = urlScanner["securityHeaders"].ToString();
-                        email.securityViolations = urlScanner["securityViolations"].ToString();
+                        email.domainAge = urlScanner["domainAge"].ToString();
+                        email.redirectsFound = System.Convert.ToInt32(urlScanner["redirectsFound"].ToString());
 
                         if (urlScanner.ContainsKey("certificates"))
                         {
@@ -74,6 +77,14 @@ public class EmailFetcher : MonoBehaviour
                             email.certSubject = certificates["subject"].ToString();
                             email.certIssueDate = certificates["issueDate"].ToString();
                             email.certExpiryDate = certificates["expiryDate"].ToString();
+                        }
+                        if (urlScanner.ContainsKey("securityHeaders"))
+                        {
+                            Dictionary<string, object> headers = urlScanner["securityHeaders"] as Dictionary<string, object>;
+
+                            email.contentSecurityPolicy = headers["Content-Security-Policy"].ToString();
+                            email.strictTransportSecurity = headers["Strict-Transport-Security"].ToString();
+                            email.xFrameOptions = headers["X-Frame-Options"].ToString();
                         }
                     }
 

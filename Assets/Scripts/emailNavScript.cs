@@ -42,14 +42,18 @@ public class emailNavScript : MonoBehaviour
         // Update hint system with the new hint
         hintSystem.SetHint(email.hint);  // Set the hint for the current email
 
-        Debug.Log($"Debug: {email.securityVerdict}");
+        Debug.Log($"Debug: ");
         scanResultScript.SetURLParameters(
-            email.securityVerdict,
-            email.securityHeaders,
-            email.securityViolations,
+            //string domainage, int redirects ,string subject, string issue, string expiry, string csp_state,
+            //string sts_state, string xfo_state
+            email.domainAge,
+            email.redirectsFound,
             email.certSubject,
             email.certIssueDate,
-            email.certExpiryDate
+            email.certExpiryDate,
+            email.contentSecurityPolicy,
+            email.strictTransportSecurity,
+            email.xFrameOptions
             );
 
         Debug.Log("UI updated: Sender, Body, Link, Hint");
