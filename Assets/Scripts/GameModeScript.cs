@@ -16,7 +16,6 @@ public class GameModeScript : MonoBehaviour
     public GameObject detectionVMScreen;
 
     public emailNavScript emailNavScript;  // Reference to the emailNavScript
-
     public EmailFetcher emailFetcher;  // Reference to the EmailFetcher
 
 

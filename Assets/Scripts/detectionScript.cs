@@ -12,8 +12,11 @@ public class detectionScript : MonoBehaviour
     public TMP_InputField VMsearchBox;
     private string copyLink = "";
 
-    public GameObject baseScreen;
-    public GameObject resultScreen;
+    public GameObject ScanbaseScreen;
+    public GameObject ScanresultScreen;
+
+    public GameObject VMChromeScreen;
+    public GameObject VMFilesScreen;
 
     void Update()
     {
@@ -35,12 +38,20 @@ public class detectionScript : MonoBehaviour
     }
     public void Scan()
     {
-        baseScreen.SetActive( false );
-        resultScreen.SetActive( true );
+        ScanbaseScreen.SetActive( false );
+        ScanresultScreen.SetActive( true );
     }
     public void ScanAnother()
     {
-        resultScreen.SetActive( false );
-        baseScreen.SetActive( true );
+        ScanresultScreen.SetActive( false );
+        ScanbaseScreen.SetActive( true );
+    }
+    public void OpenChrome()
+    {
+        VMChromeScreen.SetActive(!VMChromeScreen.activeSelf);
+    }
+    public void OpenFiles()
+    {
+        VMFilesScreen.SetActive(!VMFilesScreen.activeSelf);
     }
 }
