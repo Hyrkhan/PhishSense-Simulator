@@ -20,7 +20,6 @@ public class hintsScript : MonoBehaviour
     // Call this method to update the hint content
     public void SetHint(string hint)
     {
-        Debug.Log("Hint Set: " + hint);  // Log for debugging
         theHint = hint;                  // Set the hint text
     }
 

@@ -19,6 +19,7 @@ public class GameModeScript : MonoBehaviour
     public EmailFetcher emailFetcher;  // Reference to the EmailFetcher
 
 
+
     private void Start()
     {
         // Subscribe to the OnEmailsFetched event

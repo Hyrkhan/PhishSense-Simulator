@@ -35,7 +35,6 @@ public class scanResultScript : MonoBehaviour
 
     public void SetURLParameters(string domainage, int redirects ,string subject, string issue, string expiry, string csp_state, string sts_state, string xfo_state)
     {
-        Debug.Log("Being called");
         placeHolder_domainAge = domainage;
         placeHolder_redirectsFound = redirects;
         placeHolder_certSubject = subject;
@@ -44,7 +43,7 @@ public class scanResultScript : MonoBehaviour
         state_contentSecurityPolicy = csp_state;
         state_strictTransportSecurity = sts_state;
         state_xFrameOptions= xfo_state;
-        Debug.Log("Being Done");
+        Debug.Log("URL Params Set");
     }
 
     public void DisplayResult()
