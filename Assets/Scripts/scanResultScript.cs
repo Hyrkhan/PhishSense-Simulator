@@ -60,4 +60,45 @@ public class scanResultScript : MonoBehaviour
         strictTransportSecurity.text = state_strictTransportSecurity;
         xFrameOptions.text = state_xFrameOptions;
     }
+
+    public string CalculateSecurityRisk()
+    {
+        int risklevel = CalculateSecurityViolations();
+
+        if (risklevel == 0)
+        {
+            return "Very Low";
+        }
+        else if (risklevel < 3)
+        {
+            return "Low";
+        }
+        else if (risklevel >= 3 && risklevel <= 5)
+        {
+            return "Medium";
+        }
+        else
+        {
+
+            return "High";
+        }
+    }
+    public int CalculateSecurityViolations()
+    {
+        int violations = 0;
+        if (state_contentSecurityPolicy == "Not Set")
+        {
+            violations++;
+        }
+        if (state_strictTransportSecurity == "Not Set")
+        {
+            violations++;
+        }
+        if (state_xFrameOptions == "Not Set")
+        {
+            violations++;
+        }
+
+        return violations;
+    }
 }

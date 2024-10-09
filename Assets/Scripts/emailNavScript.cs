@@ -54,6 +54,7 @@ public class emailNavScript : MonoBehaviour
             email.strictTransportSecurity,
             email.xFrameOptions
             );
+        evaluationScript.SetEvaluationAnswers(email.grammarError, email.suspiciousSender);
 
         Debug.Log($"Email {index} displayed");
     }
@@ -65,6 +66,7 @@ public class emailNavScript : MonoBehaviour
         {
             currentIndex++;
             DisplayEmail(currentIndex);
+            evaluationScript.TurnOffButtons();
         }
     }
 
@@ -74,6 +76,7 @@ public class emailNavScript : MonoBehaviour
         {
             currentIndex--;
             DisplayEmail(currentIndex);
+            evaluationScript.TurnOffButtons();
         }
     }
 }

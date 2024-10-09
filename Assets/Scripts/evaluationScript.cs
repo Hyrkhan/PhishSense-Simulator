@@ -34,6 +34,9 @@ public class EvaluationScript : MonoBehaviour
     private List<List<string>> emailEvaluations = new List<List<string>>();
     private int currentEmailIndex;
 
+    private string grammarError = "";
+    private string suspiciousSender = "";
+    public scanResultScript scanResultScript;
 
     void Start()
     {
@@ -63,11 +66,9 @@ public class EvaluationScript : MonoBehaviour
     public void SetCurrentEmailIndex(int emailIndex)
     {
         currentEmailIndex = emailIndex;
-        // Reset buttons to the default state
         ResetButtons();
     }
 
-    // Resets the colors of buttons when switching emails
     private void ResetButtons()
     {
         for (int i = 0; i < yesButtons.Count; i++)
@@ -80,7 +81,20 @@ public class EvaluationScript : MonoBehaviour
         highButton.GetComponent<Image>().color = defaultColor;
     }
 
-    // Toggle Yes button for a specific question index
+    public void TurnOffButtons()
+    {
+        for (int i = 0; i < yesButtons.Count; i++)
+        {
+            isYesSelected[i] = false;
+            isNoSelected[i] = false;
+            emailEvaluations[currentEmailIndex][i] = "null";
+        }
+        isLowSelected = false;
+        isMidSelected = false;
+        isHighSelected = false;
+        emailEvaluations[currentEmailIndex][3] = "null";
+    }
+
     public void ToggleYesButton(int index)
     {
         if (!isYesSelected[index])  // If not selected, turn Yes green and reset No
@@ -197,6 +211,36 @@ public class EvaluationScript : MonoBehaviour
         {
             Debug.Log($"Question {i + 1}: {evaluations[i]}");
         }
+        AnswerChecker(evaluations);
     }
 
+    public void SetEvaluationAnswers(string grammar, string sender)
+    {
+        grammarError = grammar;
+        suspiciousSender = sender;
+    }
+
+    private void AnswerChecker(List<string> evaluations)
+    {
+        if (evaluations[0] == grammarError)
+        {
+            Debug.Log($"Number 1 is correct because {evaluations[0]} = {grammarError}");
+        }
+        else
+        {
+            Debug.Log("Number 1 is incorrect");
+        }
+        if (evaluations[1] == suspiciousSender)
+        {
+            Debug.Log($"Number 2 is correct because {evaluations[1]} = {suspiciousSender}");
+        }
+        else
+        {
+            Debug.Log("Number 2 is incorrect");
+        }
+        string risk = scanResultScript.CalculateSecurityRisk();
+        Debug.Log($"Risk is: {risk}");
+        int riskLevel = scanResultScript.CalculateSecurityViolations();
+        Debug.Log($"Risk Level is: {riskLevel}");
+    }
 }

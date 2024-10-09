@@ -26,6 +26,9 @@ public class EmailFetcher : MonoBehaviour
         public string contentSecurityPolicy;
         public string strictTransportSecurity;
         public string xFrameOptions;
+
+        public string grammarError;
+        public string suspiciousSender;
     }
 
     public List<Email> emails = new List<Email>();  // List to store fetched emails
@@ -86,6 +89,14 @@ public class EmailFetcher : MonoBehaviour
                             email.strictTransportSecurity = headers["Strict-Transport-Security"].ToString();
                             email.xFrameOptions = headers["X-Frame-Options"].ToString();
                         }
+                    }
+
+                    if (emailData.ContainsKey("evaluationAnswers"))
+                    {
+                        Dictionary<string, object> evaluationAnswers = emailData["evaluationAnswers"] as Dictionary<string, object>;
+
+                        email.grammarError = evaluationAnswers["grammarError"].ToString();
+                        email.suspiciousSender = evaluationAnswers["suspiciousSender"].ToString();
                     }
 
                     emails.Add(email);  // Add each email to the list
