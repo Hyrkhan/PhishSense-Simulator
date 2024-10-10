@@ -52,9 +52,10 @@ public class emailNavScript : MonoBehaviour
             email.certExpiryDate,
             email.contentSecurityPolicy,
             email.strictTransportSecurity,
-            email.xFrameOptions
+            email.xFrameOptions,
+            email.grammarError, 
+            email.suspiciousSender
             );
-        evaluationScript.SetEvaluationAnswers(email.grammarError, email.suspiciousSender);
 
         Debug.Log($"Email {index} displayed");
     }

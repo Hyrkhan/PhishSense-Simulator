@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Globalization;
+using TMPro;
 
 public class EvaluationScript : MonoBehaviour
 {
@@ -34,9 +36,9 @@ public class EvaluationScript : MonoBehaviour
     private List<List<string>> emailEvaluations = new List<List<string>>();
     private int currentEmailIndex;
 
-    private string grammarError = "";
-    private string suspiciousSender = "";
+    public TMP_InputField violationsText;
     public scanResultScript scanResultScript;
+
 
     void Start()
     {
@@ -48,6 +50,7 @@ public class EvaluationScript : MonoBehaviour
         isNoSelected = new bool[numberOfQuestions];
 
         ResetButtons();
+
     }
     private void InitializeEmailEvaluationList()
     {
@@ -167,7 +170,7 @@ public class EvaluationScript : MonoBehaviour
             isMidSelected = true;
             isLowSelected = false;
             isHighSelected = false;
-            emailEvaluations[currentEmailIndex][3] = "Mid";
+            emailEvaluations[currentEmailIndex][3] = "Medium";
         }
         else  // If already selected, reset color
         {
@@ -202,26 +205,20 @@ public class EvaluationScript : MonoBehaviour
 
     public void DisplayEvaluations()
     {
-        // Get the evaluations for the selected email
         List<string> evaluations = emailEvaluations[currentEmailIndex];
-
-        // Log each evaluation
-        Debug.Log($"Evaluations for email {currentEmailIndex}:");
-        for (int i = 0; i < evaluations.Count; i++)
-        {
-            Debug.Log($"Question {i + 1}: {evaluations[i]}");
-        }
         AnswerChecker(evaluations);
     }
 
-    public void SetEvaluationAnswers(string grammar, string sender)
-    {
-        grammarError = grammar;
-        suspiciousSender = sender;
-    }
 
     private void AnswerChecker(List<string> evaluations)
     {
+        string grammarError = scanResultScript.CheckGrammar();
+        string suspiciousSender = scanResultScript.CheckSuspiciousSender();
+        string risk = scanResultScript.CalculateSecurityRisk();
+        int violations = scanResultScript.CalculateSecurityViolations();
+        int violationsInputed = System.Convert.ToInt32(violationsText.text);
+        string certResult = scanResultScript.CallCertificateResult();
+
         if (evaluations[0] == grammarError)
         {
             Debug.Log($"Number 1 is correct because {evaluations[0]} = {grammarError}");
@@ -230,6 +227,7 @@ public class EvaluationScript : MonoBehaviour
         {
             Debug.Log("Number 1 is incorrect");
         }
+
         if (evaluations[1] == suspiciousSender)
         {
             Debug.Log($"Number 2 is correct because {evaluations[1]} = {suspiciousSender}");
@@ -238,9 +236,39 @@ public class EvaluationScript : MonoBehaviour
         {
             Debug.Log("Number 2 is incorrect");
         }
-        string risk = scanResultScript.CalculateSecurityRisk();
-        Debug.Log($"Risk is: {risk}");
-        int riskLevel = scanResultScript.CalculateSecurityViolations();
-        Debug.Log($"Risk Level is: {riskLevel}");
+
+        if (evaluations[3] == risk)
+        {
+            Debug.Log($"Number 3 is correct because {risk} = {evaluations[3]}");
+        }
+        else
+        {
+            Debug.Log($"Number 3 is incorrect becauese {risk} not {evaluations[3]}");
+        }
+
+        if (violationsInputed == violations)
+        {
+            Debug.Log($"Number 4 is correct because {violationsInputed} = {violations}");
+        }
+        else
+        {
+            Debug.Log($"Number 4 is incorrect becauese {violationsInputed} not {violations}");
+        }
+
+        if (evaluations[2] == "Yes" && certResult == "Expired")
+        {
+            Debug.Log($"Number 5 is correct because certificate is indeed expired");
+        }
+        else if (evaluations[2] == "No" && certResult == "Valid")
+        {
+            Debug.Log($"Number 5 is correct because certificate is indeed not expired");
+        }
+        else
+        {
+            Debug.Log($"Number 5 is incorrect");
+        }
+
     }
+   
+
 }

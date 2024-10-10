@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System.Globalization;
+using System;
 
 public class scanResultScript : MonoBehaviour
 {
     public TMP_Text linkBeingScanned;
     public TMP_Text resultLink;
     public TMP_Text resultVerdict;
+    public TMP_Text resultViolations;
 
     // url scanner fields
     public TMP_Text domainAge;
@@ -33,7 +36,13 @@ public class scanResultScript : MonoBehaviour
     private string state_strictTransportSecurity = "";
     private string state_xFrameOptions = "";
 
-    public void SetURLParameters(string domainage, int redirects ,string subject, string issue, string expiry, string csp_state, string sts_state, string xfo_state)
+    private DateTime todayDate = DateTime.Today;
+    private string grammarError = "";
+    private string suspiciousSender = "";
+    private string certificateResult = "";
+
+    public void SetURLParameters(string domainage, int redirects ,string subject, 
+        string issue, string expiry, string csp_state, string sts_state, string xfo_state, string grammar, string sender)
     {
         placeHolder_domainAge = domainage;
         placeHolder_redirectsFound = redirects;
@@ -43,6 +52,8 @@ public class scanResultScript : MonoBehaviour
         state_contentSecurityPolicy = csp_state;
         state_strictTransportSecurity = sts_state;
         state_xFrameOptions= xfo_state;
+        grammarError = grammar;
+        suspiciousSender = sender;
         Debug.Log("URL Params Set");
     }
 
@@ -59,21 +70,22 @@ public class scanResultScript : MonoBehaviour
         contentSecurityPolicy.text = state_contentSecurityPolicy;
         strictTransportSecurity.text = state_strictTransportSecurity;
         xFrameOptions.text = state_xFrameOptions;
+        resultVerdict.text = CalculateSecurityRisk();
+        resultViolations.text = System.Convert.ToString(CalculateSecurityViolations());
     }
 
     public string CalculateSecurityRisk()
     {
-        int risklevel = CalculateSecurityViolations();
-
+        int risklevel = (CalculateSecurityViolations() + CalculateOtherRisk());
         if (risklevel == 0)
         {
             return "Very Low";
         }
-        else if (risklevel < 3)
+        else if (risklevel < 4)
         {
             return "Low";
         }
-        else if (risklevel >= 3 && risklevel <= 5)
+        else if (risklevel >= 4 && risklevel <= 6)
         {
             return "Medium";
         }
@@ -83,6 +95,7 @@ public class scanResultScript : MonoBehaviour
             return "High";
         }
     }
+
     public int CalculateSecurityViolations()
     {
         int violations = 0;
@@ -98,7 +111,82 @@ public class scanResultScript : MonoBehaviour
         {
             violations++;
         }
-
         return violations;
+    }
+
+    public int CalculateOtherRisk()
+    {
+        int riskLevel = 0;
+        DateTime certExpiryDate = ParseDate(placeHolder_certExpiry, "yyyy-MM-dd");
+        DateTime certIssueDate = ParseDate(placeHolder_certIssue, "yyyy-MM-dd");
+        DateTime domainAgeDate = ParseDate(placeHolder_domainAge, "yyyy-MM-dd");
+
+        string certResult = CheckCertificate(certIssueDate, certExpiryDate, todayDate);
+        string domainResult = CheckDomainAge(domainAgeDate, todayDate);
+        
+        if (certResult == "Expired")
+        {
+            riskLevel += 2;
+        }
+        if (domainResult == "Too young")
+        {
+            riskLevel++;
+        }
+        if (placeHolder_redirectsFound > 3)
+        {
+            riskLevel++;
+        }
+        if (CheckSuspiciousSender() == "Yes")
+        {
+            riskLevel += 2;
+        }
+        if(CheckGrammar() == "Yes")
+        {
+            riskLevel++;
+        }
+        return riskLevel;
+    }
+
+    static DateTime ParseDate(string dateString, string format)
+    {
+        return DateTime.ParseExact(dateString.Trim(), format, CultureInfo.InvariantCulture);
+    }
+  
+
+    public string CheckCertificate(DateTime issueDate, DateTime expiryDate, DateTime today)
+    {
+        if (expiryDate < today)
+        {
+            certificateResult = "Expired";
+        }
+        else
+        {
+            certificateResult = "Valid";
+        }
+        return certificateResult;
+    }
+    public string CheckDomainAge(DateTime domainAge, DateTime today)
+    {
+        TimeSpan ageDifference = today - domainAge;
+        if (ageDifference.Days < 365)
+        {
+            return "Too young";
+        }
+        else
+        {
+            return "Acceptable";
+        }
+    }
+    public string CheckGrammar()
+    {
+        return grammarError;
+    }
+    public string CheckSuspiciousSender()
+    {
+        return suspiciousSender;
+    }
+    public string CallCertificateResult()
+    {
+        return certificateResult;
     }
 }
