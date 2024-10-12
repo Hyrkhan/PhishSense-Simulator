@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Linq;
 
 public class emailNavScript : MonoBehaviour
 {
@@ -73,8 +74,19 @@ public class emailNavScript : MonoBehaviour
         {
             currentIndex++;
             DisplayEmail(currentIndex);
-            evaluationScript.DisplayEmailMark();
-            evaluationScript.TurnOffButtons();
+
+            // Check if the email has been evaluated previously
+            if (IsEmailEvaluated(currentIndex))
+            {
+                // Display saved button colors and marks
+                evaluationScript.DisplayEmailMark();
+            }
+            else
+            {
+                // Reset buttons for a new, unevaluated email
+                evaluationScript.DisplayEmailMark();
+                evaluationScript.TurnOffButtons();
+            }
         }
     }
 
@@ -84,8 +96,27 @@ public class emailNavScript : MonoBehaviour
         {
             currentIndex--;
             DisplayEmail(currentIndex);
-            evaluationScript.DisplayEmailMark();
-            evaluationScript.TurnOffButtons();
+
+            // Display saved evaluation data and button colors
+            if (IsEmailEvaluated(currentIndex))
+            {
+                evaluationScript.DisplayEmailMark();
+            }
+            else
+            {
+                // Reset buttons for an unevaluated email
+                evaluationScript.DisplayEmailMark();
+                evaluationScript.TurnOffButtons();
+            }
         }
+    }
+
+    public bool IsEmailEvaluated(int index)
+    {
+        // Get the evaluations for the current email
+        List<string> emailEvaluations = evaluationScript.GetEmailEvaluations(index);
+
+        // Check if any evaluation exists for this email
+        return emailEvaluations.Any(evaluation => !string.IsNullOrEmpty(evaluation) && evaluation != "null");
     }
 }

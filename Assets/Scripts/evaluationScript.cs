@@ -34,6 +34,9 @@ public class EvaluationScript : MonoBehaviour
     private bool isHighSelected = false;
 
     private List<List<string>> emailEvaluations = new List<List<string>>();
+    private List<Color[]> yesButtonColors = new List<Color[]>();
+    private List<Color[]> noButtonColors = new List<Color[]>();
+    private List<Color[]> riskButtonColors = new List<Color[]>();
     private int currentEmailIndex;
 
     public TMP_InputField violationsText;
@@ -64,6 +67,17 @@ public class EvaluationScript : MonoBehaviour
             List<string> emailEvaluate = new List<string>(new string[numOfEvaluation]); // initialize with empty strings
             emailEvaluations.Add(emailEvaluate);
             emailMarks.Add(null);
+
+            yesButtonColors.Add(new Color[yesButtons.Count]);
+            noButtonColors.Add(new Color[noButtons.Count]);
+            riskButtonColors.Add(new Color[] { defaultColor, defaultColor, defaultColor });
+
+            // Set all to default color initially
+            for (int j = 0; j < yesButtons.Count; j++)
+            {
+                yesButtonColors[i][j] = defaultColor;
+                noButtonColors[i][j] = defaultColor;
+            }
         }
     }
 
@@ -72,56 +86,49 @@ public class EvaluationScript : MonoBehaviour
     {
         currentEmailIndex = emailIndex;
         ResetButtons();
+        for (int i = 0; i < yesButtons.Count; i++)
+        {
+            yesButtons[i].GetComponent<Image>().color = yesButtonColors[emailIndex][i];
+            noButtons[i].GetComponent<Image>().color = noButtonColors[emailIndex][i];
+        }
+
+        lowButton.GetComponent<Image>().color = riskButtonColors[emailIndex][0];
+        midButton.GetComponent<Image>().color = riskButtonColors[emailIndex][1];
+        highButton.GetComponent<Image>().color = riskButtonColors[emailIndex][2];
+        violationsText.text = emailEvaluations[currentEmailIndex][4];
     }
 
     private void ResetButtons()
+    {
+        // If no evaluation saved for this email, set buttons to default colors
+        if (emailEvaluations[currentEmailIndex].TrueForAll(e => e == null || e == "null"))
+        {
+            for (int i = 0; i < yesButtons.Count; i++)
+            {
+                yesButtons[i].GetComponent<Image>().color = defaultColor;
+                noButtons[i].GetComponent<Image>().color = defaultColor;
+            }
+            lowButton.GetComponent<Image>().color = defaultColor;
+            midButton.GetComponent<Image>().color = defaultColor;
+            highButton.GetComponent<Image>().color = defaultColor;
+        }
+    }
+
+    public void TurnOffButtons()
     {
         for (int i = 0; i < yesButtons.Count; i++)
         {
             yesButtons[i].GetComponent<Image>().color = defaultColor;
             noButtons[i].GetComponent<Image>().color = defaultColor;
         }
+
         lowButton.GetComponent<Image>().color = defaultColor;
         midButton.GetComponent<Image>().color = defaultColor;
         highButton.GetComponent<Image>().color = defaultColor;
-    }
 
-    public void TurnOffButtons()
-    {
-        // Loop through the yes/no buttons
-        for (int i = 0; i < yesButtons.Count; i++)
-        {
-            // Only set to null if the values haven't been set (i.e., are still null)
-            if (!isYesSelected[i] && !isNoSelected[i])
-            {
-                emailEvaluations[currentEmailIndex][i] = "null"; // Set to "null" string if no selection
-            }
-
-            // Keep current value if it's already true or false
-            if (isYesSelected[i] || isNoSelected[i])
-            {
-                // Do not set them to false, just skip
-                continue;
-            }
-
-            // Reset the selections
-            isYesSelected[i] = false;
-            isNoSelected[i] = false;
-        }
-
-        if (!isLowSelected && !isMidSelected && !isHighSelected)
-        {
-            // Set risk evaluation (index 3) to "null" only if no selection was made
-            if (emailEvaluations[currentEmailIndex][3] != "Low" &&
-                emailEvaluations[currentEmailIndex][3] != "Medium" &&
-                emailEvaluations[currentEmailIndex][3] != "High")
-            {
-                emailEvaluations[currentEmailIndex][3] = "null"; // Set risk evaluation to "null" if no selection
-                Debug.Log("Risk evaluation nulled");
-            }
-        }
-
-        // Reset the risk selection flags (but don't reset the evaluation string)
+        // Ensure button states are reset as well
+        isYesSelected = new bool[yesButtons.Count];
+        isNoSelected = new bool[noButtons.Count];
         isLowSelected = false;
         isMidSelected = false;
         isHighSelected = false;
@@ -137,12 +144,17 @@ public class EvaluationScript : MonoBehaviour
             isYesSelected[index] = true;
             isNoSelected[index] = false;
             emailEvaluations[currentEmailIndex][index] = "Yes";
+
+            yesButtonColors[currentEmailIndex][index] = yesColor;
+            noButtonColors[currentEmailIndex][index] = defaultColor;
         }
         else  // If already selected, reset color
         {
             yesButtons[index].GetComponent<Image>().color = defaultColor;
             isYesSelected[index] = false;
             emailEvaluations[currentEmailIndex][index] = "null";
+
+            yesButtonColors[currentEmailIndex][index] = defaultColor;
         }
         //Debug.Log($"Button Yes: {index} is pressed");
     }
@@ -157,12 +169,17 @@ public class EvaluationScript : MonoBehaviour
             isNoSelected[index] = true;
             isYesSelected[index] = false;
             emailEvaluations[currentEmailIndex][index] = "No";
+
+            noButtonColors[currentEmailIndex][index] = noColor;
+            yesButtonColors[currentEmailIndex][index] = defaultColor;
         }
         else  // If already selected, reset color
         {
             noButtons[index].GetComponent<Image>().color = defaultColor;
             isNoSelected[index] = false;
             emailEvaluations[currentEmailIndex][index] = "null";
+
+            noButtonColors[currentEmailIndex][index] = defaultColor;
         }
         //Debug.Log($"Button No: {index} is pressed");
     }
@@ -179,6 +196,10 @@ public class EvaluationScript : MonoBehaviour
             isMidSelected = false;
             isHighSelected = false;
             emailEvaluations[currentEmailIndex][3] = "Low";
+
+            riskButtonColors[currentEmailIndex][0] = lowColor;
+            riskButtonColors[currentEmailIndex][1] = defaultColor;
+            riskButtonColors[currentEmailIndex][2] = defaultColor;
         }
         else  // If already selected, reset color
         {
@@ -186,6 +207,7 @@ public class EvaluationScript : MonoBehaviour
             isLowSelected = false;
             emailEvaluations[currentEmailIndex][3] = "null";
             Debug.Log("nullingLow");
+            riskButtonColors[currentEmailIndex][0] = defaultColor;
         }
         //Debug.Log($"Low Button is pressed");
     }
@@ -202,6 +224,10 @@ public class EvaluationScript : MonoBehaviour
             isLowSelected = false;
             isHighSelected = false;
             emailEvaluations[currentEmailIndex][3] = "Medium";
+
+            riskButtonColors[currentEmailIndex][0] = defaultColor;
+            riskButtonColors[currentEmailIndex][1] = midColor;
+            riskButtonColors[currentEmailIndex][2] = defaultColor;
         }
         else  // If already selected, reset color
         {
@@ -209,6 +235,7 @@ public class EvaluationScript : MonoBehaviour
             isMidSelected = false;
             emailEvaluations[currentEmailIndex][3] = "null";
             Debug.Log("nullingMid");
+            riskButtonColors[currentEmailIndex][1] = defaultColor;
         }
         //Debug.Log($"Mid Button is pressed");
     }
@@ -225,6 +252,10 @@ public class EvaluationScript : MonoBehaviour
             isLowSelected = false;
             isMidSelected = false;
             emailEvaluations[currentEmailIndex][3] = "High";
+
+            riskButtonColors[currentEmailIndex][0] = defaultColor;
+            riskButtonColors[currentEmailIndex][1] = defaultColor;
+            riskButtonColors[currentEmailIndex][2] = highColor;
         }
         else  // If already selected, reset color
         {
@@ -232,6 +263,7 @@ public class EvaluationScript : MonoBehaviour
             isHighSelected = false;
             emailEvaluations[currentEmailIndex][3] = "null";
             Debug.Log("nullingHigh");
+            riskButtonColors[currentEmailIndex][2] = defaultColor;
         }
         //Debug.Log($"High Button is pressed");
     }
@@ -372,6 +404,19 @@ public class EvaluationScript : MonoBehaviour
 
         return new EmailData(emailMark, emailEvaluation);
     }
+
+    public List<string> GetEmailEvaluations(int currentEmailIndex)
+    {
+        // Ensure the index is within bounds
+        if (currentEmailIndex < 0 || currentEmailIndex >= emailEvaluations.Count)
+        {
+            return new List<string>(); // Return an empty list if the index is out of bounds
+        }
+
+        List<string> emailEvaluation = emailEvaluations[currentEmailIndex];
+        return emailEvaluation;
+    }
+
     public class EmailButtonState
     {
         public string Evaluation { get; set; }  // "Yes", "No", or "null"
