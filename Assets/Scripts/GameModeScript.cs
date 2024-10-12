@@ -17,7 +17,7 @@ public class GameModeScript : MonoBehaviour
 
     public emailNavScript emailNavScript;  // Reference to the emailNavScript
     public EmailFetcher emailFetcher;  // Reference to the EmailFetcher
-
+    public EvaluationScript evaluationScript;
 
 
     private void Start()
@@ -36,6 +36,7 @@ public class GameModeScript : MonoBehaviour
 
             // Pass the fetched emails to emailNavScript and display the first one
             emailNavScript.SetEmails(emailFetcher.GetEmails());
+            evaluationScript.InitializeEmailEvaluationList(emailFetcher.GetEmails().Count);
             emailNavScript.DisplayEmail(0);
         }
         else

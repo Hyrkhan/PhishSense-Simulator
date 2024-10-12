@@ -38,30 +38,32 @@ public class EvaluationScript : MonoBehaviour
 
     public TMP_InputField violationsText;
     public scanResultScript scanResultScript;
+    public GameObject safeLogo;
+    public GameObject warningLogo;
 
+    private List<bool?> emailMarks = new List<bool?>();
+    public int emailCount;
 
+   
     void Start()
     {
-        InitializeEmailEvaluationList();
-
-        // Initialize Yes/No buttons state tracking
-        int numberOfQuestions = yesButtons.Count;
-        isYesSelected = new bool[numberOfQuestions];
-        isNoSelected = new bool[numberOfQuestions];
-
+        
         ResetButtons();
 
     }
-    private void InitializeEmailEvaluationList()
+    public void InitializeEmailEvaluationList(int count)
     {
+        isYesSelected = new bool[3];
+        isNoSelected = new bool[3];
         // For simplicity, assuming you have 5 questions per email and 3 emails
-        int numOfEmails = 2;
+        emailCount = count;
         int numOfEvaluation = 4;
 
-        for (int i = 0; i < numOfEmails; i++)
+        for (int i = 0; i < count; i++)
         {
             List<string> emailEvaluate = new List<string>(new string[numOfEvaluation]); // initialize with empty strings
             emailEvaluations.Add(emailEvaluate);
+            emailMarks.Add(null);
         }
     }
 
@@ -86,16 +88,41 @@ public class EvaluationScript : MonoBehaviour
 
     public void TurnOffButtons()
     {
+        // Loop through the yes/no buttons
         for (int i = 0; i < yesButtons.Count; i++)
         {
+            // Only set to null if the values haven't been set (i.e., are still null)
+            if (!isYesSelected[i] && !isNoSelected[i])
+            {
+                emailEvaluations[currentEmailIndex][i] = "null"; // Set to "null" string if no selection
+            }
+
+            // Keep current value if it's already true or false
+            if (isYesSelected[i] || isNoSelected[i])
+            {
+                // Do not set them to false, just skip
+                continue;
+            }
+
+            // Reset the selections
             isYesSelected[i] = false;
             isNoSelected[i] = false;
-            emailEvaluations[currentEmailIndex][i] = "null";
         }
-        isLowSelected = false;
-        isMidSelected = false;
-        isHighSelected = false;
-        emailEvaluations[currentEmailIndex][3] = "null";
+
+        // Check if any of the risk levels (low/mid/high) are selected
+        if (!isLowSelected && !isMidSelected && !isHighSelected)
+        {
+            emailEvaluations[currentEmailIndex][3] = "null"; // Set risk evaluation to "null" if no selection
+        }
+
+        // If already selected, skip resetting them
+        else
+        {
+            // Reset only if no value is selected
+            isLowSelected = false;
+            isMidSelected = false;
+            isHighSelected = false;
+        }
     }
 
     public void ToggleYesButton(int index)
@@ -114,7 +141,7 @@ public class EvaluationScript : MonoBehaviour
             isYesSelected[index] = false;
             emailEvaluations[currentEmailIndex][index] = "null";
         }
-        Debug.Log($"Button Yes: {index} is pressed");
+        //Debug.Log($"Button Yes: {index} is pressed");
     }
 
     // Toggle No button for a specific question index
@@ -134,7 +161,7 @@ public class EvaluationScript : MonoBehaviour
             isNoSelected[index] = false;
             emailEvaluations[currentEmailIndex][index] = "null";
         }
-        Debug.Log($"Button No: {index} is pressed");
+        //Debug.Log($"Button No: {index} is pressed");
     }
 
     // Toggle Low button
@@ -156,7 +183,7 @@ public class EvaluationScript : MonoBehaviour
             isLowSelected = false;
             emailEvaluations[currentEmailIndex][3] = "null";
         }
-        Debug.Log($"Low Button is pressed");
+        //Debug.Log($"Low Button is pressed");
     }
 
     // Toggle Mid button
@@ -178,7 +205,7 @@ public class EvaluationScript : MonoBehaviour
             isMidSelected = false;
             emailEvaluations[currentEmailIndex][3] = "null";
         }
-        Debug.Log($"Mid Button is pressed");
+        //Debug.Log($"Mid Button is pressed");
     }
 
     // Toggle High button
@@ -200,23 +227,41 @@ public class EvaluationScript : MonoBehaviour
             isHighSelected = false;
             emailEvaluations[currentEmailIndex][3] = "null";
         }
-        Debug.Log($"High Button is pressed");
+        //Debug.Log($"High Button is pressed");
     }
 
-    public void DisplayEvaluations()
+    public void MarkAsSafe()
+    {
+        AnswerChecker();
+        Debug.Log("Marked as Safe");
+        emailMarks[currentEmailIndex] = false;
+        ToggleEmailMark(false);
+    }
+
+    public void MarkAsPhishing()
+    {
+        AnswerChecker();
+        Debug.Log("Marked as Phishing");
+        emailMarks[currentEmailIndex] = true;
+        ToggleEmailMark(true);
+    }
+
+    private void AnswerChecker()
     {
         List<string> evaluations = emailEvaluations[currentEmailIndex];
-        AnswerChecker(evaluations);
-    }
-
-
-    private void AnswerChecker(List<string> evaluations)
-    {
         string grammarError = scanResultScript.CheckGrammar();
         string suspiciousSender = scanResultScript.CheckSuspiciousSender();
         string risk = scanResultScript.CalculateSecurityRisk();
         int violations = scanResultScript.CalculateSecurityViolations();
-        int violationsInputed = System.Convert.ToInt32(violationsText.text);
+        int violationsInputed = 0;
+        try
+        {
+            violationsInputed = System.Convert.ToInt32(violationsText.text);
+        }
+        catch (Exception ex)
+        {
+            Debug.Log(ex);
+        }
         string certResult = scanResultScript.CallCertificateResult();
 
         if (evaluations[0] == grammarError)
@@ -267,8 +312,69 @@ public class EvaluationScript : MonoBehaviour
         {
             Debug.Log($"Number 5 is incorrect");
         }
-
     }
-   
+
+    public void ToggleEmailMark(bool isPhishing)
+    {
+        if (isPhishing)
+        {
+            // Show warning logo, hide safe logo
+            safeLogo.SetActive(false);
+            warningLogo.SetActive(true);
+        }
+        else
+        {
+            // Show safe logo, hide warning logo
+            warningLogo.SetActive(false);
+            safeLogo.SetActive(true);
+        }
+    }
+
+    public void DisplayEmailMark()
+    {
+        bool? mark = emailMarks[currentEmailIndex];
+
+        if (mark.HasValue)
+        {
+            // If the email is marked, show the appropriate logo
+            ToggleEmailMark(mark.Value);
+        }
+        else
+        {
+            // No mark saved, hide both logos
+            warningLogo.SetActive(false);
+            safeLogo.SetActive(false);
+        }
+    }
+
+    public class EmailData
+    {
+        public bool? Mark { get; set; }
+        public List<string> Evaluation { get; set; }
+
+        public EmailData(bool? mark, List<string> evaluation)
+        {
+            Mark = mark;
+            Evaluation = evaluation;
+        }
+    }
+    public EmailData GetEmailData(int currentEmailIndex)
+    {
+        bool? emailMark = emailMarks[currentEmailIndex];
+        List<string> emailEvaluation = emailEvaluations[currentEmailIndex];
+
+        return new EmailData(emailMark, emailEvaluation);
+    }
+    public class EmailButtonState
+    {
+        public string Evaluation { get; set; }  // "Yes", "No", or "null"
+        public Color ButtonColor { get; set; }  // Color of the button
+
+        public EmailButtonState(string evaluation, Color buttonColor)
+        {
+            Evaluation = evaluation;
+            ButtonColor = buttonColor;
+        }
+    }
 
 }

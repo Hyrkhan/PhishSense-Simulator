@@ -16,6 +16,7 @@ public class emailNavScript : MonoBehaviour
     public hintsScript hintSystem;
     public scanResultScript scanResultScript;
     public EvaluationScript evaluationScript;
+    public EvaluateFormScript evaluateFormScript;
 
     // Set the emails from the fetched data
     public void SetEmails(List<EmailFetcher.Email> fetchedEmails)
@@ -41,6 +42,7 @@ public class emailNavScript : MonoBehaviour
         // Update hint system with the new hint
         hintSystem.SetHint(email.hint);  // Set the hint for the current email
         evaluationScript.SetCurrentEmailIndex(index);
+        evaluateFormScript.currentEmailIndex = index;
 
         scanResultScript.SetURLParameters(
             //string domainage, int redirects ,string subject, string issue, string expiry, string csp_state,
@@ -56,8 +58,12 @@ public class emailNavScript : MonoBehaviour
             email.grammarError, 
             email.suspiciousSender
             );
-
         Debug.Log($"Email {index} displayed");
+    }
+
+    public int GiveEmailCount()
+    {
+        return emails.Count;
     }
 
     // Navigation for next and previous buttons
@@ -67,6 +73,7 @@ public class emailNavScript : MonoBehaviour
         {
             currentIndex++;
             DisplayEmail(currentIndex);
+            evaluationScript.DisplayEmailMark();
             evaluationScript.TurnOffButtons();
         }
     }
@@ -77,6 +84,7 @@ public class emailNavScript : MonoBehaviour
         {
             currentIndex--;
             DisplayEmail(currentIndex);
+            evaluationScript.DisplayEmailMark();
             evaluationScript.TurnOffButtons();
         }
     }
