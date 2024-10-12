@@ -57,7 +57,7 @@ public class EvaluationScript : MonoBehaviour
         isNoSelected = new bool[3];
         // For simplicity, assuming you have 5 questions per email and 3 emails
         emailCount = count;
-        int numOfEvaluation = 4;
+        int numOfEvaluation = 5;
 
         for (int i = 0; i < count; i++)
         {
@@ -109,20 +109,23 @@ public class EvaluationScript : MonoBehaviour
             isNoSelected[i] = false;
         }
 
-        // Check if any of the risk levels (low/mid/high) are selected
         if (!isLowSelected && !isMidSelected && !isHighSelected)
         {
-            emailEvaluations[currentEmailIndex][3] = "null"; // Set risk evaluation to "null" if no selection
+            // Set risk evaluation (index 3) to "null" only if no selection was made
+            if (emailEvaluations[currentEmailIndex][3] != "Low" &&
+                emailEvaluations[currentEmailIndex][3] != "Medium" &&
+                emailEvaluations[currentEmailIndex][3] != "High")
+            {
+                emailEvaluations[currentEmailIndex][3] = "null"; // Set risk evaluation to "null" if no selection
+                Debug.Log("Risk evaluation nulled");
+            }
         }
 
-        // If already selected, skip resetting them
-        else
-        {
-            // Reset only if no value is selected
-            isLowSelected = false;
-            isMidSelected = false;
-            isHighSelected = false;
-        }
+        // Reset the risk selection flags (but don't reset the evaluation string)
+        isLowSelected = false;
+        isMidSelected = false;
+        isHighSelected = false;
+        violationsText.text = "";
     }
 
     public void ToggleYesButton(int index)
@@ -182,6 +185,7 @@ public class EvaluationScript : MonoBehaviour
             lowButton.GetComponent<Image>().color = defaultColor;
             isLowSelected = false;
             emailEvaluations[currentEmailIndex][3] = "null";
+            Debug.Log("nullingLow");
         }
         //Debug.Log($"Low Button is pressed");
     }
@@ -204,6 +208,7 @@ public class EvaluationScript : MonoBehaviour
             midButton.GetComponent<Image>().color = defaultColor;
             isMidSelected = false;
             emailEvaluations[currentEmailIndex][3] = "null";
+            Debug.Log("nullingMid");
         }
         //Debug.Log($"Mid Button is pressed");
     }
@@ -226,6 +231,7 @@ public class EvaluationScript : MonoBehaviour
             highButton.GetComponent<Image>().color = defaultColor;
             isHighSelected = false;
             emailEvaluations[currentEmailIndex][3] = "null";
+            Debug.Log("nullingHigh");
         }
         //Debug.Log($"High Button is pressed");
     }
@@ -257,6 +263,7 @@ public class EvaluationScript : MonoBehaviour
         try
         {
             violationsInputed = System.Convert.ToInt32(violationsText.text);
+            emailEvaluations[currentEmailIndex][4] = violationsText.text;
         }
         catch (Exception ex)
         {
