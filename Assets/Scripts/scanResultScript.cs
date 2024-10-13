@@ -26,6 +26,22 @@ public class scanResultScript : MonoBehaviour
     public TMP_Text strictTransportSecurity;
     public TMP_Text xFrameOptions;
 
+    public TMP_Text zoom_resultLink;
+    public TMP_Text zoom_resultVerdict;
+    public TMP_Text zoom_resultViolations;
+
+    // url scanner fields
+    public TMP_Text zoom_domainAge;
+    public TMP_Text zoom_redirectsFound;
+    // ssl certificates info
+    public TMP_Text zoom_certSubject;
+    public TMP_Text zoom_certIssue;
+    public TMP_Text zoom_certExpiry;
+    // security headers info
+    public TMP_Text zoom_contentSecurityPolicy;
+    public TMP_Text zoom_strictTransportSecurity;
+    public TMP_Text zoom_xFrameOptions;
+
     private string placeHolder_domainAge = "";
     private int placeHolder_redirectsFound = 0;
 
@@ -40,10 +56,11 @@ public class scanResultScript : MonoBehaviour
     private DateTime todayDate = DateTime.Today;
     private string grammarError = "";
     private string suspiciousSender = "";
+    private string markAns = "";
     private string certificateResult = "";
 
     public void SetURLParameters(string domainage, int redirects ,string subject, 
-        string issue, string expiry, string csp_state, string sts_state, string xfo_state, string grammar, string sender)
+        string issue, string expiry, string csp_state, string sts_state, string xfo_state, string grammar, string sender, string markAnswer)
     {
         placeHolder_domainAge = domainage;
         placeHolder_redirectsFound = redirects;
@@ -55,6 +72,7 @@ public class scanResultScript : MonoBehaviour
         state_xFrameOptions= xfo_state;
         grammarError = grammar;
         suspiciousSender = sender;
+        markAns = markAnswer;
         Debug.Log("URL Params Set");
     }
 
@@ -73,6 +91,20 @@ public class scanResultScript : MonoBehaviour
         xFrameOptions.text = state_xFrameOptions;
         resultVerdict.text = CalculateSecurityRisk();
         resultViolations.text = System.Convert.ToString(CalculateSecurityViolations());
+
+        zoom_resultLink.text = resultLink.text;
+        zoom_domainAge.text = domainAge.text;
+        zoom_redirectsFound.text = redirectsFound.text;
+
+        zoom_certSubject.text = certSubject.text;
+        zoom_certIssue.text = certIssue.text;
+        zoom_certExpiry.text = certExpiry.text;
+
+        zoom_contentSecurityPolicy.text = contentSecurityPolicy.text;
+        zoom_strictTransportSecurity.text = strictTransportSecurity.text;
+        zoom_xFrameOptions.text = xFrameOptions.text;
+        zoom_resultVerdict.text = resultVerdict.text;
+        zoom_resultViolations.text = resultViolations.text;
     }
 
     public string CalculateSecurityRisk()
@@ -185,6 +217,10 @@ public class scanResultScript : MonoBehaviour
     public string CheckSuspiciousSender()
     {
         return suspiciousSender;
+    }
+    public string CheckMarkAnswer()
+    {
+        return markAns;
     }
     public string CallCertificateResult()
     {

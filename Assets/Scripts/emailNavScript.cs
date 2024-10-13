@@ -57,7 +57,8 @@ public class emailNavScript : MonoBehaviour
             email.strictTransportSecurity,
             email.xFrameOptions,
             email.grammarError, 
-            email.suspiciousSender
+            email.suspiciousSender,
+            email.markAnswer
             );
         Debug.Log($"Email {index} displayed");
     }

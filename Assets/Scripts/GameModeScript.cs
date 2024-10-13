@@ -18,6 +18,7 @@ public class GameModeScript : MonoBehaviour
     public emailNavScript emailNavScript;  // Reference to the emailNavScript
     public EmailFetcher emailFetcher;  // Reference to the EmailFetcher
     public EvaluationScript evaluationScript;
+    public GameObject gameOverScreen;
 
 
 
@@ -34,6 +35,7 @@ public class GameModeScript : MonoBehaviour
         {
             gameWelcomeScreen.SetActive(false);
             gameScreen.SetActive(true);
+            gameOverScreen.SetActive(false);
 
             // Pass the fetched emails to emailNavScript and display the first one
             emailNavScript.SetEmails(emailFetcher.GetEmails());
@@ -81,6 +83,11 @@ public class GameModeScript : MonoBehaviour
         detectionScanScreen.SetActive(false);
         detectionVMScreen.SetActive(false);
         detectionGameScreen.SetActive(true);
+    }
+    public void FinishGame()
+    {
+        gameScreen.SetActive(false);
+        gameOverScreen.SetActive(true);
     }
 
 }

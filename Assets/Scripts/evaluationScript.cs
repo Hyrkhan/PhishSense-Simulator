@@ -270,18 +270,18 @@ public class EvaluationScript : MonoBehaviour
 
     public void MarkAsSafe()
     {
-        AnswerChecker();
         Debug.Log("Marked as Safe");
         emailMarks[currentEmailIndex] = false;
         ToggleEmailMark(false);
+        AnswerChecker();
     }
 
     public void MarkAsPhishing()
     {
-        AnswerChecker();
         Debug.Log("Marked as Phishing");
         emailMarks[currentEmailIndex] = true;
         ToggleEmailMark(true);
+        AnswerChecker();
     }
 
     private void AnswerChecker()
@@ -291,7 +291,9 @@ public class EvaluationScript : MonoBehaviour
         string suspiciousSender = scanResultScript.CheckSuspiciousSender();
         string risk = scanResultScript.CalculateSecurityRisk();
         int violations = scanResultScript.CalculateSecurityViolations();
+        string markAns = scanResultScript.CheckMarkAnswer();
         int violationsInputed = 0;
+        int score = 0;
         try
         {
             violationsInputed = System.Convert.ToInt32(violationsText.text);
@@ -306,6 +308,7 @@ public class EvaluationScript : MonoBehaviour
         if (evaluations[0] == grammarError)
         {
             Debug.Log($"Number 1 is correct because {evaluations[0]} = {grammarError}");
+            score++;
         }
         else
         {
@@ -315,6 +318,7 @@ public class EvaluationScript : MonoBehaviour
         if (evaluations[1] == suspiciousSender)
         {
             Debug.Log($"Number 2 is correct because {evaluations[1]} = {suspiciousSender}");
+            score++;
         }
         else
         {
@@ -324,6 +328,7 @@ public class EvaluationScript : MonoBehaviour
         if (evaluations[3] == risk)
         {
             Debug.Log($"Number 3 is correct because {risk} = {evaluations[3]}");
+            score++;
         }
         else
         {
@@ -333,6 +338,7 @@ public class EvaluationScript : MonoBehaviour
         if (violationsInputed == violations)
         {
             Debug.Log($"Number 4 is correct because {violationsInputed} = {violations}");
+            score++;
         }
         else
         {
@@ -342,15 +348,32 @@ public class EvaluationScript : MonoBehaviour
         if (evaluations[2] == "Yes" && certResult == "Expired")
         {
             Debug.Log($"Number 5 is correct because certificate is indeed expired");
+            score++;
         }
         else if (evaluations[2] == "No" && certResult == "Valid")
         {
             Debug.Log($"Number 5 is correct because certificate is indeed not expired");
+            score++;
         }
         else
         {
             Debug.Log($"Number 5 is incorrect");
         }
+        if (emailMarks[currentEmailIndex] == true && markAns == "Phishing")
+        {
+            Debug.Log("Correct! It is a Phishing Email");
+            score += 5;
+        }
+        else if (emailMarks[currentEmailIndex] == false && markAns == "Safe")
+        {
+            Debug.Log("Correct! It is a Safe Email");
+            score += 5;
+        }
+        else
+        {
+            Debug.Log("Wrong Mark");
+        }
+        Debug.Log($"Final Score is: {score}");
     }
 
     public void ToggleEmailMark(bool isPhishing)

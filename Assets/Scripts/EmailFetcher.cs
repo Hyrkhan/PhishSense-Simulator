@@ -29,6 +29,7 @@ public class EmailFetcher : MonoBehaviour
 
         public string grammarError;
         public string suspiciousSender;
+        public string markAnswer;
     }
 
     public List<Email> emails = new List<Email>();  // List to store fetched emails
@@ -97,6 +98,7 @@ public class EmailFetcher : MonoBehaviour
 
                         email.grammarError = evaluationAnswers["grammarError"].ToString();
                         email.suspiciousSender = evaluationAnswers["suspiciousSender"].ToString();
+                        email.markAnswer = evaluationAnswers["markAnswer"].ToString();
                     }
 
                     emails.Add(email);  // Add each email to the list
