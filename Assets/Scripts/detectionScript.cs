@@ -18,6 +18,7 @@ public class detectionScript : MonoBehaviour
     public GameObject VMChromeScreen;
     public GameObject VMFilesScreen;
 
+    public GameObject maximizebutton;
     void Update()
     {
         clipboard.text = copyLink;
@@ -40,11 +41,13 @@ public class detectionScript : MonoBehaviour
     {
         ScanbaseScreen.SetActive( false );
         ScanresultScreen.SetActive( true );
+        maximizebutton.SetActive(true);
     }
     public void ScanAnother()
     {
         ScanresultScreen.SetActive( false );
         ScanbaseScreen.SetActive( true );
+        maximizebutton.SetActive ( false );
     }
     public void OpenChrome()
     {

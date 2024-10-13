@@ -17,6 +17,11 @@ public class otherButtons : MonoBehaviour
     public TMP_Text fullscreenEmailBodyText;
     public TMP_Text fullscreenEmailLinkText;
 
+    public GameObject zoom_resultScreen;
+    public GameObject resultScreen;
+    public GameObject detectionButtons;
+
+
     // Method to maximize the email screen
     public void MaximizeScreen()
     {
@@ -35,5 +40,17 @@ public class otherButtons : MonoBehaviour
     {
         emailScreen.SetActive(false);
         gameScreen.SetActive(true);
+    }
+    public void MaximizeScanResult()
+    {
+        resultScreen.SetActive(false);
+        detectionButtons.SetActive(false);
+        zoom_resultScreen.SetActive(true);
+    }
+    public void MinimizeScanResult()
+    {
+        zoom_resultScreen.SetActive(false);
+        resultScreen.SetActive(true);
+        detectionButtons.SetActive(true);
     }
 }

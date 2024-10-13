@@ -8,6 +8,7 @@ using System;
 
 public class scanResultScript : MonoBehaviour
 {
+
     public TMP_Text linkBeingScanned;
     public TMP_Text resultLink;
     public TMP_Text resultVerdict;
